@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "CookieSync",
+  "version": "0.1.0",
+  "description": "Manage the websites selected for a future, user-controlled sync workflow.",
+  "action": {
+    "default_title": "CookieSync",
+    "default_popup": "src/pages/popup/index.html"
+  },
+  "permissions": ["storage"]
+}

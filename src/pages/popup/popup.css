@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #e9edf4;
+  background: #0c111a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; width: 380px; min-height: 500px; background: #0c111a; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+.popup-shell { padding: 22px; }
+.brand-row { display: flex; align-items: center; gap: 12px; position: relative; }
+.brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(145deg, #55e0b4, #3e9eeb); color: #07131d; font-size: 12px; font-weight: 900; letter-spacing: -.04em; }
+.eyebrow { margin: 0 0 2px; color: #7f8da3; font-size: 9px; font-weight: 800; letter-spacing: .16em; }
+h1 { margin: 0; font-size: 19px; letter-spacing: -.03em; }
+.status-pill { display: flex; align-items: center; gap: 6px; margin-left: auto; padding: 6px 8px; border: 1px solid #263445; border-radius: 999px; color: #a7b4c5; font-size: 10px; }
+.status-pill span { width: 6px; height: 6px; border-radius: 50%; background: #ecae63; }
+.intro-card { display: flex; gap: 11px; margin-top: 22px; padding: 13px; border: 1px solid #23384a; border-radius: 13px; background: linear-gradient(110deg, #12202a, #141c29); }
+.intro-icon { display: grid; flex: 0 0 28px; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: #1a3541; color: #75dfbd; font-size: 17px; }
+.intro-title { margin: 1px 0 4px; font-size: 12px; font-weight: 700; }
+.intro-copy { margin: 0; color: #9aa9bb; font-size: 10px; line-height: 1.5; }
+.add-form { margin-top: 22px; }
+.add-form label, .section-heading h2 { font-size: 11px; font-weight: 700; }
+.input-row { display: flex; gap: 8px; margin-top: 8px; }
+.input-row input { flex: 1; min-width: 0; height: 38px; padding: 0 11px; border: 1px solid #293749; border-radius: 9px; outline: none; background: #101722; color: #e9edf4; font-size: 11px; }
+.input-row input:focus { border-color: #51c8a4; box-shadow: 0 0 0 2px #51c8a422; }
+.input-row input::placeholder { color: #647286; }
+.input-row button { width: 38px; height: 38px; border: 0; border-radius: 9px; background: #5be0b5; color: #092018; font-size: 22px; line-height: 1; font-weight: 500; }
+.input-row button:disabled { cursor: default; opacity: .45; }
+.field-help, .form-error { margin: 7px 1px 0; color: #78879b; font-size: 9px; }
+.form-error { color: #ff9a9a; }
+.site-section { margin-top: 23px; }
+.section-heading { display: flex; align-items: center; gap: 7px; }
+.section-heading h2 { margin: 0; }
+.count-badge { display: inline-grid; min-width: 17px; height: 17px; place-items: center; padding: 0 4px; border: 1px solid #293749; border-radius: 6px; color: #91a0b2; font-size: 9px; }
+.empty-state { display: grid; place-items: center; min-height: 112px; margin-top: 10px; border: 1px dashed #2a3747; border-radius: 12px; color: #7f8da0; text-align: center; font-size: 10px; }
+.empty-state p { margin: 5px 0 1px; color: #c5cfdb; font-size: 11px; font-weight: 650; }
+.empty-icon { color: #586a7d; font-size: 23px; }
+.site-list { display: grid; gap: 7px; margin: 10px 0 0; padding: 0; list-style: none; }
+.site-item { display: flex; align-items: center; gap: 9px; min-height: 42px; padding: 6px 9px; border: 1px solid #202d3b; border-radius: 10px; background: #111923; }
+.site-favicon { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 7px; background: #1c2b39; color: #81d7c0; font-size: 10px; font-weight: 800; }
+.site-origin { flex: 1; overflow: hidden; color: #d2d9e3; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.remove-button { width: 25px; height: 25px; border: 0; border-radius: 7px; background: transparent; color: #78879a; font-size: 18px; }
+.remove-button:hover { background: #39252a; color: #ff9a9a; }
+.privacy-note { display: flex; gap: 8px; align-items: flex-start; margin-top: 18px; padding: 10px 1px 0; border-top: 1px solid #202a36; color: #768699; }
+.privacy-note span { color: #65cba9; font-size: 13px; }
+.privacy-note p { margin: 1px 0 0; font-size: 9px; line-height: 1.45; }
