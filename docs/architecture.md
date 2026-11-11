@@ -58,6 +58,7 @@ The proposal adopts the shared useful practices: distinct execution-context entr
 CookieSync/
 ├── .github/workflows/ci.yml        # lint, typecheck, unit tests, production build
 ├── docs/architecture.md            # architecture and future API/security decisions
+├── public/icons/                   # editable SVG source and PNG extension icons
 ├── src/pages/popup/                # React popup UI and Tailwind styles
 ├── src/sites/                      # website URL validation and local list storage
 ├── tests/unit/                     # Vitest tests for site URL validation
@@ -109,7 +110,7 @@ The initial extension proposal does not select an authentication protocol. Befor
 
 ## Build, test, and debugging choices
 
-- **Build/development:** Vite plus `@crxjs/vite-plugin` for MV3 packaging and development reload behavior. No UI framework or general extension framework initially.
+- **Build/development:** Vite plus `@crxjs/vite-plugin` for MV3 packaging. The development command runs Vite's build watcher and writes compiled output to `dist_chrome/`; load that directory as an unpacked extension and reload it after rebuilds. No UI framework beyond the selected React template and no general extension framework.
 - **Language/API types:** TypeScript strict mode, `typescript`, and one Chrome API typing package (`@types/chrome` or `chrome-types`).
 - **Unit tests:** Vitest for pure site validation, cookie selection, snapshot metadata, and state-transition rules. Use synthetic cookie fixtures only. Keep Chrome API calls behind narrow boundaries so they can be separately checked in Chrome.
 - **Static analysis:** ESLint with TypeScript-aware rules. Provide `lint`, `typecheck`, `test`, `build`, and combined `check` scripts.

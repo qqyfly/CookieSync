@@ -6,5 +6,15 @@ import manifest from './manifest.json';
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), crx({ manifest })],
+  build: {
+    outDir: 'dist_chrome',
+    rollupOptions: {
+      // Keep the manifest popup as an explicit Vite HTML entry. This makes
+      // Vite transform the TSX module instead of serving it as a static file.
+      input: {
+        popup: 'src/pages/popup/index.html',
+      },
+    },
+  },
   clearScreen: false,
 });

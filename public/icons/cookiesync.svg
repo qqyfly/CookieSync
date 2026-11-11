@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="cookie" x1="31" y1="29" x2="89" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD879"/>
+      <stop offset="1" stop-color="#E99A3C"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="42" y1="43" x2="82" y2="93" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#774323"/>
+      <stop offset="1" stop-color="#482819"/>
+    </linearGradient>
+    <mask id="cookie-shape" maskUnits="userSpaceOnUse" x="0" y="0" width="128" height="128">
+      <rect width="128" height="128" fill="#000"/>
+      <circle cx="61" cy="67" r="43" fill="#fff"/>
+      <circle cx="98" cy="38" r="14" fill="#000"/>
+      <circle cx="105" cy="59" r="11" fill="#000"/>
+      <circle cx="86" cy="22" r="10" fill="#000"/>
+    </mask>
+  </defs>
+  <circle cx="61" cy="67" r="43" fill="url(#cookie)" mask="url(#cookie-shape)"/>
+  <path d="M39 43c6-7 15-12 25-14" fill="none" stroke="#FFF0B6" stroke-linecap="round" stroke-width="4" opacity=".65"/>
+  <circle cx="48" cy="52" r="5.5" fill="url(#chip)"/>
+  <circle cx="69" cy="42" r="5" fill="url(#chip)"/>
+  <circle cx="82" cy="57" r="6" fill="url(#chip)"/>
+  <circle cx="57" cy="72" r="6.5" fill="url(#chip)"/>
+  <circle cx="87" cy="82" r="5.5" fill="url(#chip)"/>
+  <circle cx="40" cy="88" r="5" fill="url(#chip)"/>
+  <circle cx="72" cy="99" r="4.5" fill="url(#chip)"/>
+  <circle cx="30" cy="70" r="3" fill="#FFE7A0" opacity=".8"/>
+  <circle cx="99" cy="99" r="22" fill="#54D7B3" stroke="#101B2A" stroke-width="4"/>
+  <path d="M91 97a8 8 0 0 1 13-5l2 2m0 0v-5m0 5h-5M107 101a8 8 0 0 1-13 5l-2-2m0 0v5m0-5h5" fill="none" stroke="#102C31" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.7"/>
+</svg>
