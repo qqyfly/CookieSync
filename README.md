@@ -4,7 +4,9 @@ CookieSync is a Chrome Manifest V3 extension starter based on [JohnBra/vite-web-
 
 ## Current scope
 
-The popup lets the user maintain a list of website origins, stored in `chrome.storage.local`. Remote synchronization is not implemented. This version does not read, collect, display, upload, store, or replay cookie values. It requests no cookie or website host permissions.
+The popup lets the user maintain a list of website origins, stored in `chrome.storage.local`; it shows the five most recently added sites. **View all** opens a full-page list with search and pagination. Remote synchronization is not implemented. This version does not read, collect, display, upload, store, or replay cookie values. It requests no cookie or website host permissions.
+
+The extension icon's right-click menu contains a single **Settings** item. The Settings page saves an optional remote server URL in `chrome.storage.local`. It does not make network requests; the backend and sync protocol are not implemented.
 
 ## Development
 
@@ -28,11 +30,15 @@ Load `dist_chrome/` as an unpacked extension to try the production build. The po
 
 ## Project layout
 
-- `src/pages/popup/` — React popup UI and styles.
+- `src/pages/popup/` — compact React popup showing the latest five sites.
+- `src/pages/sites/` — full-page searchable, paginated site list.
+- `src/pages/settings/` — local-only remote server URL setting.
+- `src/background/` — service worker that adds the icon's single **Settings** context-menu item.
 - `src/sites/` — website-origin validation and local site-list storage.
+- `src/settings/` — server URL validation and local storage.
 - `public/icons/` — editable SVG cookie icon and Chrome-sized PNG exports.
-- `manifest.json` — minimal MV3 manifest. Only the `storage` permission is present.
+- `manifest.json` — MV3 manifest with `storage` and `contextMenus` permissions; no cookie or host permissions.
 - `vite.config.chrome.ts` — Chrome build configuration using CRXJS.
-- `tests/unit/` — unit tests for site URL validation.
+- `tests/unit/` — unit tests for site URL validation, sorting, search, pagination, and server URL validation.
 
 The Go service/API, remote storage, cookie access, and automation-script client are outside this starter's implementation scope.

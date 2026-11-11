@@ -9,7 +9,7 @@ Cookie values are bearer credentials: anyone who obtains a valid session cookie 
 
 This proposal assumes the user is syncing their own browser sessions for websites and automation they own or are explicitly authorized to operate. Site selection must be explicit and visible. Do not silently collect cookies, broaden access to all sites, or expose snapshots to unauthenticated clients. The future service must authenticate the extension and the consuming script, authorize them to the same user/site scope, protect cookie values in transit and at rest, and never log cookie values. Provide per-site disable and remote delete/revoke behavior.
 
-The current starter is deliberately limited to managing site origins in `chrome.storage.local`. It requests only the `storage` permission. Cookie capture, cookie permissions, network sync, backend code, and script-side retrieval are not part of this initial implementation.
+The current starter is deliberately limited to managing site origins in `chrome.storage.local`, saving a server URL locally, and opening Settings from the extension icon's context menu. It requests `storage` and `contextMenus`; it has no cookie or host permissions. Cookie capture, network sync, backend code, and script-side retrieval are not part of this implementation.
 
 Prefer a Go HTTPS API as the only client-facing boundary. The extension should not connect directly to SQL or MQTT. A practical initial server design is authenticated HTTPS upload/read endpoints with encrypted SQL-backed snapshots; MQTT can publish a small “snapshot updated” notification for consumers. Do not publish raw cookie values to a broadly subscribed MQTT topic. If MQTT must carry cookie payloads, it needs strict topic ACLs, TLS, client authentication, and payload encryption. Keep the transport/storage choice behind the Go service so the extension protocol does not depend on either database or broker.
 
@@ -59,10 +59,14 @@ CookieSync/
 ├── .github/workflows/ci.yml        # lint, typecheck, unit tests, production build
 ├── docs/architecture.md            # architecture and future API/security decisions
 ├── public/icons/                   # editable SVG source and PNG extension icons
-├── src/pages/popup/                # React popup UI and Tailwind styles
+├── src/background/                 # service-worker registration for the icon context menu
+├── src/pages/popup/                # React popup with the five most recently added sites
+├── src/pages/sites/                # full-page searchable and paginated site list
+├── src/pages/settings/             # local-only remote server URL setting
+├── src/settings/                   # server URL validation and local storage
 ├── src/sites/                      # website URL validation and local list storage
-├── tests/unit/                     # Vitest tests for site URL validation
-├── manifest.json                   # minimal MV3 manifest; storage permission only
+├── tests/unit/                     # Vitest tests for site validation, search and pagination
+├── manifest.json                   # MV3 permissions, icon, popup, options page and worker
 ├── vite.config.chrome.ts           # Vite + CRXJS Chrome build
 ├── eslint.config.mjs               # TypeScript-aware static analysis
 ├── package.json                    # scripts and dependencies
@@ -77,8 +81,8 @@ The current starter does not yet define a sync client or cookie adapter. Add the
 
 | Path | Purpose |
 | --- | --- |
-| `manifest.json` | Authored MV3 manifest at the repository root, following the selected template. The current version declares only `storage`. If cookie features are added later, request only the necessary API and site permissions. |
-| `src/background/` | Service-worker event registration and orchestration. Read cookies only for enabled sites; handle worker restart and retry behavior without relying on globals. |
+| `manifest.json` | Authored MV3 manifest at the repository root, following the selected template. It declares `storage` and `contextMenus`; no cookie or website host permissions are requested. |
+| `src/background/` | Registers the extension icon's one **Settings** right-click menu item and opens the settings page when selected. |
 | `src/popup/` | User-facing site allowlist and controls for add, enable, disable, sync, delete, and sync status. Never display full cookie values; display only safe metadata such as site, last sync time, and outcome. |
 | `src/sites/` | Validates and stores user-selected origins and coordinates Chrome optional host permission requests. Reject malformed URLs and normalize to exact origins; do not accept arbitrary wildcard patterns from input. |
 | `src/cookies/` | Encapsulates Chrome cookie API use and snapshot conversion. Only include cookies matching enabled sites; preserve required attributes such as domain/path/secure/HTTP-only/expiry as required for an authorized consumer. Never log values or put them in error messages. |

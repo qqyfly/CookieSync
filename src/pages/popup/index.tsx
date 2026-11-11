@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
 import { normalizeSiteUrl, type Site } from '../../sites/site';
+import { sortSitesNewestFirst } from '../../sites/site-list';
 import { loadSites, saveSites } from '../../sites/site-store';
 import './popup.css';
 
@@ -27,9 +28,7 @@ function Popup() {
         setError('That website is already on your list.');
         return;
       }
-      const updated = [...sites, { origin, addedAt: Date.now() }].sort((a, b) =>
-        a.origin.localeCompare(b.origin),
-      );
+      const updated = sortSitesNewestFirst([...sites, { origin, addedAt: Date.now() }]);
       await saveSites(updated);
       setSites(updated);
       setAddress('');
@@ -91,6 +90,9 @@ function Popup() {
         <div className="section-heading">
           <h2 id="sites-heading">Selected websites</h2>
           <span className="count-badge">{sites.length}</span>
+          <button className="view-all-button" type="button" onClick={() => void chrome.runtime.openOptionsPage()}>
+            View all <span aria-hidden="true">↗</span>
+          </button>
         </div>
         {!loaded ? (
           <p className="empty-state">Loading your list…</p>
@@ -102,7 +104,7 @@ function Popup() {
           </div>
         ) : (
           <ul className="site-list">
-            {sites.map((site) => (
+            {sites.slice(0, 3).map((site) => (
               <li className="site-item" key={site.origin}>
                 <span className="site-favicon" aria-hidden="true">{site.origin.replace(/^https?:\/\//, '').charAt(0).toUpperCase()}</span>
                 <span className="site-origin">{site.origin.replace(/^https?:\/\//, '')}</span>
@@ -110,6 +112,9 @@ function Popup() {
               </li>
             ))}
           </ul>
+        )}
+        {loaded && sites.length > 3 && (
+          <p className="latest-note">Showing the 3 most recently added websites.</p>
         )}
       </section>
 

@@ -1,4 +1,5 @@
 import type { Site } from './site';
+import { sortSitesNewestFirst } from './site-list';
 
 const STORAGE_KEY = 'cookiesync.sites';
 
@@ -6,7 +7,7 @@ export async function loadSites(): Promise<Site[]> {
   const result = await chrome.storage.local.get(STORAGE_KEY);
   const sites = result[STORAGE_KEY] as unknown;
   if (!Array.isArray(sites)) return [];
-  return sites.filter(isSite).sort((a, b) => a.origin.localeCompare(b.origin));
+  return sortSitesNewestFirst(sites.filter(isSite));
 }
 
 export async function saveSites(sites: Site[]): Promise<void> {

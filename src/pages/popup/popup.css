@@ -37,6 +37,9 @@ h1 { margin: 0; font-size: 19px; letter-spacing: -.03em; }
 .section-heading { display: flex; align-items: center; gap: 7px; }
 .section-heading h2 { margin: 0; }
 .count-badge { display: inline-grid; min-width: 17px; height: 17px; place-items: center; padding: 0 4px; border: 1px solid #293749; border-radius: 6px; color: #91a0b2; font-size: 9px; }
+.view-all-button { margin-left: auto; padding: 4px 7px; border: 1px solid #293749; border-radius: 7px; background: #111923; color: #6ddcba; font-size: 9px; }
+.view-all-button:hover { border-color: #4a8c79; background: #14232a; }
+.latest-note { margin: 8px 0 0; color: #738399; font-size: 9px; }
 .empty-state { display: grid; place-items: center; min-height: 112px; margin-top: 10px; border: 1px dashed #2a3747; border-radius: 12px; color: #7f8da0; text-align: center; font-size: 10px; }
 .empty-state p { margin: 5px 0 1px; color: #c5cfdb; font-size: 11px; font-weight: 650; }
 .empty-icon { color: #586a7d; font-size: 23px; }

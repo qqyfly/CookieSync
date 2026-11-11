@@ -13,6 +13,8 @@ export default defineConfig({
       // Vite transform the TSX module instead of serving it as a static file.
       input: {
         popup: 'src/pages/popup/index.html',
+        sites: 'src/pages/sites/index.html',
+        settings: 'src/pages/settings/index.html',
       },
     },
   },
