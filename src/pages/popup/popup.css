@@ -14,7 +14,7 @@ button, input { font: inherit; }
 button { cursor: pointer; }
 .popup-shell { padding: 22px; }
 .brand-row { display: flex; align-items: center; gap: 12px; position: relative; }
-.brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(145deg, #55e0b4, #3e9eeb); color: #07131d; font-size: 12px; font-weight: 900; letter-spacing: -.04em; }
+.brand-mark { width: 38px; height: 38px; border-radius: 12px; object-fit: contain; }
 .eyebrow { margin: 0 0 2px; color: #7f8da3; font-size: 9px; font-weight: 800; letter-spacing: .16em; }
 h1 { margin: 0; font-size: 19px; letter-spacing: -.03em; }
 .status-pill { display: flex; align-items: center; gap: 6px; margin-left: auto; padding: 6px 8px; border: 1px solid #263445; border-radius: 999px; color: #a7b4c5; font-size: 10px; }
@@ -34,10 +34,7 @@ h1 { margin: 0; font-size: 19px; letter-spacing: -.03em; }
 .section-heading { display: flex; align-items: center; gap: 7px; }
 .section-heading h2 { margin: 0; }
 .count-badge { display: inline-grid; min-width: 17px; height: 17px; place-items: center; padding: 0 4px; border: 1px solid #293749; border-radius: 6px; color: #91a0b2; font-size: 9px; }
-.heading-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
-.read-cookies-button { padding: 4px 7px; border: 1px solid #293749; border-radius: 7px; background: #111923; color: #81d7c0; font-size: 9px; }
-.read-cookies-button:hover { border-color: #4a8c79; background: #14232a; }
-.view-all-button { padding: 4px 7px; border: 1px solid #293749; border-radius: 7px; background: #111923; color: #6ddcba; font-size: 9px; }
+.view-all-button { margin-left: auto; padding: 4px 7px; border: 1px solid #293749; border-radius: 7px; background: #111923; color: #6ddcba; font-size: 9px; }
 .view-all-button:hover { border-color: #4a8c79; background: #14232a; }
 .latest-note { margin: 8px 0 0; color: #738399; font-size: 9px; }
 .empty-state { display: grid; place-items: center; min-height: 112px; margin-top: 10px; border: 1px dashed #2a3747; border-radius: 12px; color: #7f8da0; text-align: center; font-size: 10px; }

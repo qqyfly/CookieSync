@@ -106,19 +106,10 @@ function Popup() {
     }
   }
 
-  async function handleReadCookies() {
-    if (!chrome?.cookies) {
-      setError('Please reload the extension at chrome://extensions (click ↺) to activate "cookies" permission.');
-      return;
-    }
-    setError('');
-    await readSiteListCookies(sites);
-  }
-
   return (
     <main className="popup-shell">
       <header className="brand-row">
-        <div className="brand-mark" aria-hidden="true">CS</div>
+        <img className="brand-mark" src="/icons/icon-48.png" alt="CookieSync logo" width="38" height="38" />
         <div>
           <p className="eyebrow">COOKIE SYNC</p>
           <h1>Website list</h1>
@@ -148,25 +139,13 @@ function Popup() {
         <div className="section-heading">
           <h2 id="sites-heading">Selected websites</h2>
           <span className="count-badge">{sites.length}</span>
-          <div className="heading-actions">
-            {sites.length > 0 && (
-              <button
-                className="read-cookies-button"
-                type="button"
-                onClick={() => void handleReadCookies()}
-                title="Read all cookies for website list and print to console"
-              >
-                Read cookies
-              </button>
-            )}
-            <button
-              className="view-all-button"
-              type="button"
-              onClick={() => void chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/sites/index.html') })}
-            >
-              View all <span aria-hidden="true">↗</span>
-            </button>
-          </div>
+          <button
+            className="view-all-button"
+            type="button"
+            onClick={() => void chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/sites/index.html') })}
+          >
+            View all <span aria-hidden="true">↗</span>
+          </button>
         </div>
         {!loaded ? (
           <p className="empty-state">Loading your list…</p>
