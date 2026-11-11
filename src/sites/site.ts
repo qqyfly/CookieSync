@@ -30,3 +30,8 @@ export function normalizeSiteUrl(input: string): string {
 
   return url.origin;
 }
+
+export function siteOriginPermissionPattern(origin: string): string {
+  const url = new URL(origin);
+  return `${url.protocol}//${url.hostname}/*`;
+}

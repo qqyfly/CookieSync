@@ -1,39 +1,96 @@
 import { useEffect, useState } from 'react';
-import type { FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
-import { normalizeSiteUrl, type Site } from '../../sites/site';
-import { sortSitesNewestFirst } from '../../sites/site-list';
-import { loadSites, saveSites } from '../../sites/site-store';
+import { normalizeSiteUrl, siteOriginPermissionPattern, type Site } from '../../sites/site';
+import { finishPendingSite, loadPendingSite, loadSites, savePendingSite, saveSites } from '../../sites/site-store';
+import { readSiteCookies, readSiteListCookies } from '../../cookies/cookies';
 import './popup.css';
+
+// Expose on window for easy access in DevTools console
+Object.assign(window, { readSiteListCookies, readSiteCookies });
 
 function Popup() {
   const [sites, setSites] = useState<Site[]>([]);
-  const [address, setAddress] = useState('');
+  const [currentSite, setCurrentSite] = useState('');
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    void loadSites()
-      .then(setSites)
-      .catch(() => setError('Could not load the saved website list.'))
-      .finally(() => setLoaded(true));
+    void (async () => {
+      try {
+        let storedSites = await loadSites();
+        const pendingSite = await loadPendingSite();
+        if (pendingSite) {
+          const permissionPattern = siteOriginPermissionPattern(pendingSite.origin);
+          const granted = await chrome.permissions.contains({ origins: [permissionPattern] });
+          storedSites = await finishPendingSite(pendingSite, granted);
+          if (granted) {
+            void readSiteListCookies(storedSites);
+          }
+        }
+        setSites(storedSites);
+      } catch {
+        setError('Could not load the saved website list.');
+      } finally {
+        setLoaded(true);
+      }
+    })();
   }, []);
 
-  async function addSite(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError('');
-    try {
-      const origin = normalizeSiteUrl(address);
-      if (sites.some((site) => site.origin === origin)) {
-        setError('That website is already on your list.');
-        return;
+  useEffect(() => {
+    void chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+      if (tab?.url) {
+        try {
+          setCurrentSite(normalizeSiteUrl(tab.url));
+        } catch {
+          setCurrentSite('');
+        }
       }
-      const updated = sortSitesNewestFirst([...sites, { origin, addedAt: Date.now() }]);
-      await saveSites(updated);
+    });
+  }, []);
+
+  async function addCurrentSite() {
+    setError('');
+    if (!currentSite) {
+      setError('Open an HTTP or HTTPS website, then try again.');
+      return;
+    }
+    if (sites.some((site) => site.origin === currentSite)) {
+      setError('That website is already on your list.');
+      return;
+    }
+
+    setAdding(true);
+    const permissionPattern = siteOriginPermissionPattern(currentSite);
+    const pendingSite = { origin: currentSite, addedAt: Date.now() };
+    try {
+      // Request immediately from the click handler so Chrome can show its permission prompt.
+      const permissionRequest = chrome.permissions.request({ origins: [permissionPattern] });
+      const pendingWrite = savePendingSite(pendingSite);
+      const granted = await permissionRequest;
+      await pendingWrite;
+      const updated = await finishPendingSite(pendingSite, granted);
       setSites(updated);
-      setAddress('');
+      if (!granted) {
+        setError('Permission was not granted, so the website was not added.');
+      } else {
+        // Read cookies after accepting read cookie permission
+        if (!chrome?.cookies) {
+          setError('Reload extension at chrome://extensions to apply "cookies" permission.');
+        } else {
+          try {
+            await readSiteListCookies(updated);
+          } catch (cookieErr) {
+            console.error('[CookieSync] Error reading cookies after permission grant:', cookieErr);
+          }
+        }
+      }
     } catch (cause) {
+      await finishPendingSite(pendingSite, false).catch(() => undefined);
+      await chrome.permissions.remove({ origins: [permissionPattern] }).catch(() => false);
       setError(cause instanceof Error ? cause.message : 'Could not add that website.');
+    } finally {
+      setAdding(false);
     }
   }
 
@@ -42,10 +99,20 @@ function Popup() {
     try {
       await saveSites(updated);
       setSites(updated);
+      await chrome.permissions.remove({ origins: [siteOriginPermissionPattern(origin)] });
       setError('');
     } catch {
       setError('Could not remove that website.');
     }
+  }
+
+  async function handleReadCookies() {
+    if (!chrome?.cookies) {
+      setError('Please reload the extension at chrome://extensions (click ↺) to activate "cookies" permission.');
+      return;
+    }
+    setError('');
+    await readSiteListCookies(sites);
   }
 
   return (
@@ -67,36 +134,39 @@ function Popup() {
         </div>
       </section>
 
-      <form className="add-form" onSubmit={(event) => void addSite(event)}>
-        <label htmlFor="site-address">Add a website</label>
-        <div className="input-row">
-          <input
-            id="site-address"
-            type="text"
-            inputMode="url"
-            autoComplete="url"
-            placeholder="https://example.com"
-            value={address}
-            onChange={(event) => setAddress(event.target.value)}
-            aria-describedby={error ? 'form-error' : 'site-help'}
-          />
-          <button type="submit" disabled={!loaded || !address.trim()} aria-label="Add website">+</button>
-        </div>
-        <p className="field-help" id="site-help">Enter a hostname or URL. The list stores its origin only.</p>
+      <section className="add-form" aria-label="Add the current website">
+        <button className="add-current-button" type="button" onClick={() => void addCurrentSite()} disabled={!loaded || !currentSite || adding}>
+          {adding ? 'Requesting permission…' : 'Add current site'}
+        </button>
+        <p className="field-help" id="site-help">
+          {currentSite ? `Current site: ${new URL(currentSite).hostname}. Chrome will ask before granting site access.` : 'Open an HTTP or HTTPS website to add it.'}
+        </p>
         {error && <p className="form-error" id="form-error" role="alert">{error}</p>}
-      </form>
+      </section>
 
       <section className="site-section" aria-labelledby="sites-heading">
         <div className="section-heading">
           <h2 id="sites-heading">Selected websites</h2>
           <span className="count-badge">{sites.length}</span>
-          <button
-            className="view-all-button"
-            type="button"
-            onClick={() => void chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/sites/index.html') })}
-          >
-            View all <span aria-hidden="true">↗</span>
-          </button>
+          <div className="heading-actions">
+            {sites.length > 0 && (
+              <button
+                className="read-cookies-button"
+                type="button"
+                onClick={() => void handleReadCookies()}
+                title="Read all cookies for website list and print to console"
+              >
+                Read cookies
+              </button>
+            )}
+            <button
+              className="view-all-button"
+              type="button"
+              onClick={() => void chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/sites/index.html') })}
+            >
+              View all <span aria-hidden="true">↗</span>
+            </button>
+          </div>
         </div>
         {!loaded ? (
           <p className="empty-state">Loading your list…</p>
@@ -124,7 +194,7 @@ function Popup() {
 
       <footer className="privacy-note">
         <span aria-hidden="true">◇</span>
-        <p>This initial version does not access, collect, or send cookies.</p>
+        <p>Cookies for accepted websites are read locally and printed to the console.</p>
       </footer>
     </main>
   );

@@ -22,5 +22,6 @@
     "service_worker": "src/background/index.ts",
     "type": "module"
   },
-  "permissions": ["storage", "contextMenus"]
+  "permissions": ["storage", "contextMenus", "activeTab", "cookies"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"]
 }

@@ -3,7 +3,11 @@ import { createRoot } from 'react-dom/client';
 import type { Site } from '../../sites/site';
 import { paginateSites, searchSites, SITE_PAGE_SIZE, sortSitesNewestFirst } from '../../sites/site-list';
 import { loadSites, saveSites } from '../../sites/site-store';
+import { readSiteCookies, readSiteListCookies } from '../../cookies/cookies';
 import './sites.css';
+
+// Expose on window for easy access in DevTools console
+Object.assign(window, { readSiteListCookies, readSiteCookies });
 
 function SelectedSitesPage() {
   const [sites, setSites] = useState<Site[]>([]);
@@ -66,6 +70,19 @@ function SelectedSitesPage() {
     setPage(1);
   }
 
+  async function handleReadCookies(origin?: string) {
+    if (!chrome?.cookies) {
+      setError('Please reload the extension at chrome://extensions (click ↺ on CookieSync) to activate the newly added "cookies" permission.');
+      return;
+    }
+    setError('');
+    if (origin) {
+      await readSiteCookies(origin);
+    } else {
+      await readSiteListCookies(sites);
+    }
+  }
+
   return (
     <main className="sites-page">
       <header className="sites-header">
@@ -85,17 +102,28 @@ function SelectedSitesPage() {
             <h2 id="list-title">Website list</h2>
             <p>{result.totalItems} {result.totalItems === 1 ? 'website' : 'websites'}</p>
           </div>
-          <label className="search-box">
-            <span className="search-icon" aria-hidden="true">⌕</span>
-            <span className="sr-only">Search websites</span>
-            <input
-              type="search"
-              placeholder="Search websites"
-              value={query}
-              onChange={(event) => updateQuery(event.target.value)}
-            />
-            {query && <button type="button" onClick={() => updateQuery('')} aria-label="Clear search">×</button>}
-          </label>
+          <div className="toolbar-actions">
+            <button
+              className="read-all-button"
+              type="button"
+              onClick={() => void handleReadCookies()}
+              disabled={sites.length === 0}
+              title="Read all cookies for saved websites and print to console"
+            >
+              Read all cookies
+            </button>
+            <label className="search-box">
+              <span className="search-icon" aria-hidden="true">⌕</span>
+              <span className="sr-only">Search websites</span>
+              <input
+                type="search"
+                placeholder="Search websites"
+                value={query}
+                onChange={(event) => updateQuery(event.target.value)}
+              />
+              {query && <button type="button" onClick={() => updateQuery('')} aria-label="Clear search">×</button>}
+            </label>
+          </div>
         </div>
 
         {error && <p className="sites-error" role="alert">{error}</p>}
@@ -131,6 +159,15 @@ function SelectedSitesPage() {
                       </td>
                       <td className="date-cell">{new Date(site.addedAt).toLocaleDateString()}</td>
                       <td className="action-cell">
+                        <button
+                          type="button"
+                          className="read-site-button"
+                          onClick={() => void handleReadCookies(site.origin)}
+                          aria-label={`Read cookies for ${site.origin}`}
+                          title="Read cookies and print to console"
+                        >
+                          Read cookies
+                        </button>
                         <button type="button" onClick={() => void removeSite(site.origin)} aria-label={`Remove ${site.origin}`}>
                           Remove
                         </button>
@@ -172,7 +209,7 @@ function SelectedSitesPage() {
 
       <footer className="sites-footer">
         <span aria-hidden="true">◇</span>
-        <p>Websites are stored locally in this Chrome profile. Cookie access and remote sync are not implemented.</p>
+        <p>Websites are stored locally in this Chrome profile. Cookies are read locally and printed to the console.</p>
       </footer>
     </main>
   );

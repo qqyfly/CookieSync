@@ -9,7 +9,7 @@ Cookie values are bearer credentials: anyone who obtains a valid session cookie 
 
 This proposal assumes the user is syncing their own browser sessions for websites and automation they own or are explicitly authorized to operate. Site selection must be explicit and visible. Do not silently collect cookies, broaden access to all sites, or expose snapshots to unauthenticated clients. The future service must authenticate the extension and the consuming script, authorize them to the same user/site scope, protect cookie values in transit and at rest, and never log cookie values. Provide per-site disable and remote delete/revoke behavior.
 
-The current starter is deliberately limited to managing site origins in `chrome.storage.local`, saving a server URL locally, and opening Settings from the extension icon's context menu. It requests `storage` and `contextMenus`; it has no cookie or host permissions. Cookie capture, network sync, backend code, and script-side retrieval are not part of this implementation.
+The current starter is deliberately limited to managing site origins in `chrome.storage.local`, saving a server URL locally, and opening Settings from the extension icon's context menu. Adding the active site requests optional host access for that exact origin; removing it releases that host grant. The manifest also uses `activeTab` to identify the page whose action popup the user opened. The extension does not declare the `cookies` permission, read cookie values, or perform network sync. Backend code and script-side retrieval are not part of this implementation.
 
 Prefer a Go HTTPS API as the only client-facing boundary. The extension should not connect directly to SQL or MQTT. A practical initial server design is authenticated HTTPS upload/read endpoints with encrypted SQL-backed snapshots; MQTT can publish a small “snapshot updated” notification for consumers. Do not publish raw cookie values to a broadly subscribed MQTT topic. If MQTT must carry cookie payloads, it needs strict topic ACLs, TLS, client authentication, and payload encryption. Keep the transport/storage choice behind the Go service so the extension protocol does not depend on either database or broker.
 
@@ -81,7 +81,7 @@ The current starter does not yet define a sync client or cookie adapter. Add the
 
 | Path | Purpose |
 | --- | --- |
-| `manifest.json` | Authored MV3 manifest at the repository root, following the selected template. It declares `storage` and `contextMenus`; no cookie or website host permissions are requested. |
+| `manifest.json` | Authored MV3 manifest at the repository root, following the selected template. It declares `storage`, `contextMenus`, and `activeTab`; HTTP(S) site access is optional and requested for the active site only. It does not declare cookie access. |
 | `src/background/` | Registers the extension icon's one **Settings** right-click menu item and opens the settings page when selected. |
 | `src/popup/` | User-facing site allowlist and controls for add, enable, disable, sync, delete, and sync status. Never display full cookie values; display only safe metadata such as site, last sync time, and outcome. |
 | `src/sites/` | Validates and stores user-selected origins and coordinates Chrome optional host permission requests. Reject malformed URLs and normalize to exact origins; do not accept arbitrary wildcard patterns from input. |
@@ -103,7 +103,7 @@ The current starter does not yet define a sync client or cookie adapter. Add the
 
 ## Cookie synchronization and remote service design
 
-1. **Site enrollment:** The user enters/selects a website in the popup. The extension validates and normalizes its origin, explains that the site's current session cookies will be sent to the configured service, then requests optional host access for that site. Each site can be paused or removed independently.
+1. **Site enrollment (future sync phase):** The user selects a website in the popup. The extension validates and normalizes its origin, explains that the site's current session cookies will be sent to the configured service, then requests optional host access for that site. Each site can be paused or removed independently. In the current starter, the popup adds the active tab's origin after a Chrome host-access prompt; it does not read or send cookies.
 2. **Snapshot capture:** The service worker reads cookies only for enrolled and enabled sites using `chrome.cookies`. Cookie events may mark a site's snapshot dirty and schedule a sync. The extension should avoid unnecessarily frequent full snapshots and must tolerate service-worker suspension.
 3. **Upload:** The future client sends a bounded, versioned snapshot to the configured Go API over HTTPS. The API authenticates the extension, checks user/site authorization, validates size and schema, and encrypts cookie values at rest. API credentials must not be hard-coded, committed, or logged.
 4. **Storage and notification:** Prefer SQL for durable “latest snapshot” state. If consumers need push notification, MQTT should signal that a version changed; the consumer then fetches the authorized snapshot over the API. This keeps bearer cookie values out of broker topics and retained messages. A different choice requires a documented threat model and access controls.
