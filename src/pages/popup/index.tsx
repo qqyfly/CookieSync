@@ -90,7 +90,11 @@ function Popup() {
         <div className="section-heading">
           <h2 id="sites-heading">Selected websites</h2>
           <span className="count-badge">{sites.length}</span>
-          <button className="view-all-button" type="button" onClick={() => void chrome.runtime.openOptionsPage()}>
+          <button
+            className="view-all-button"
+            type="button"
+            onClick={() => void chrome.tabs.create({ url: chrome.runtime.getURL('src/pages/sites/index.html') })}
+          >
             View all <span aria-hidden="true">↗</span>
           </button>
         </div>

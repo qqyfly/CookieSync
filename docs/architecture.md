@@ -66,7 +66,7 @@ CookieSync/
 ├── src/settings/                   # server URL validation and local storage
 ├── src/sites/                      # website URL validation and local list storage
 ├── tests/unit/                     # Vitest tests for site validation, search and pagination
-├── manifest.json                   # MV3 permissions, icon, popup, options page and worker
+├── manifest.json                   # MV3 permissions, icons, popup and service worker
 ├── vite.config.chrome.ts           # Vite + CRXJS Chrome build
 ├── eslint.config.mjs               # TypeScript-aware static analysis
 ├── package.json                    # scripts and dependencies

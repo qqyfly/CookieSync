@@ -6,7 +6,7 @@ CookieSync is a Chrome Manifest V3 extension starter based on [JohnBra/vite-web-
 
 The popup lets the user maintain a list of website origins, stored in `chrome.storage.local`; it shows the five most recently added sites. **View all** opens a full-page list with search and pagination. Remote synchronization is not implemented. This version does not read, collect, display, upload, store, or replay cookie values. It requests no cookie or website host permissions.
 
-The extension icon's right-click menu contains a single **Settings** item. The Settings page saves an optional remote server URL in `chrome.storage.local`. It does not make network requests; the backend and sync protocol are not implemented.
+The extension icon's right-click menu contains a single **Settings** item. The Settings page saves an optional remote server URL in `chrome.storage.local`. It does not make network requests; the backend and sync protocol are not implemented. **View all** opens the websites page directly in a new tab, without registering it as Chrome's built-in Options page.
 
 ## Development
 
