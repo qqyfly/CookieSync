@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #e9edf4;
+  background: #0c111a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { min-width: 320px; min-height: 100vh; margin: 0; background: #0c111a; }
+button, input { font: inherit; }
+button, a { cursor: pointer; }
+.settings-page { width: min(100% - 40px, 760px); margin: 0 auto; padding: 42px 0 30px; }
+.settings-header { margin-bottom: 27px; }
+.back-link { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 24px; color: #8ca0b3; font-size: 11px; text-decoration: none; }
+.back-link:hover { color: #7fe0c2; }
+.back-link span { font-size: 16px; }
+.settings-brand { display: flex; align-items: center; gap: 13px; }
+.settings-brand img { border-radius: 12px; }
+.settings-eyebrow { margin: 0 0 3px; color: #7f8da3; font-size: 10px; font-weight: 800; letter-spacing: .16em; }
+.settings-header h1 { margin: 0; font-size: clamp(24px, 4vw, 32px); letter-spacing: -.04em; }
+.settings-subtitle { margin: 14px 0 0; color: #95a4b8; font-size: 12px; }
+.settings-card { overflow: hidden; border: 1px solid #263445; border-radius: 16px; background: #111923; box-shadow: 0 18px 55px #0003; }
+.settings-card-heading { display: flex; align-items: center; gap: 12px; padding: 21px 23px; border-bottom: 1px solid #233040; }
+.settings-symbol { display: grid; flex: 0 0 36px; place-items: center; width: 36px; height: 36px; border: 1px solid #2b4a4d; border-radius: 11px; background: #152b30; color: #70d8b7; font-size: 19px; }
+.settings-card-heading h2 { margin: 0; font-size: 14px; }
+.settings-card-heading p { margin: 5px 0 0; color: #8090a5; font-size: 10px; }
+.local-pill { display: flex; align-items: center; gap: 6px; margin-left: auto; padding: 6px 9px; border: 1px solid #2b3a4b; border-radius: 999px; color: #92a0b2; font-size: 9px; white-space: nowrap; }
+.local-pill span { width: 6px; height: 6px; border-radius: 50%; background: #74d9b8; }
+.settings-card form { padding: 23px; }
+.settings-card label { display: block; margin-bottom: 8px; color: #d6deea; font-size: 11px; font-weight: 700; }
+.server-input-row { display: flex; gap: 9px; }
+.server-input-row input { min-width: 0; flex: 1; height: 41px; padding: 0 12px; border: 1px solid #2b3a4d; border-radius: 9px; outline: 0; background: #0d141e; color: #e9edf4; font-size: 12px; }
+.server-input-row input:focus { border-color: #51c8a4; box-shadow: 0 0 0 2px #51c8a422; }
+.server-input-row input::placeholder { color: #6d7c90; }
+.server-input-row button { min-width: 82px; height: 41px; border: 0; border-radius: 9px; background: #5be0b5; color: #092018; font-size: 11px; font-weight: 700; }
+.server-input-row button:disabled { cursor: default; opacity: .55; }
+.server-help { margin: 8px 1px 0; color: #7c8ba0; font-size: 10px; line-height: 1.5; }
+.settings-error, .settings-success { margin: 12px 1px 0; font-size: 11px; }
+.settings-error { color: #ff9a9a; }
+.settings-success { color: #77dcba; }
+.settings-notice { display: flex; gap: 9px; align-items: flex-start; padding: 14px 23px; border-top: 1px solid #233040; background: #0e1620; color: #8b9aab; }
+.settings-notice span { color: #72d4b4; font-size: 13px; }
+.settings-notice p { margin: 1px 0 0; font-size: 10px; line-height: 1.5; }
+
+@media (max-width: 540px) {
+  .settings-page { width: min(100% - 24px, 760px); padding-top: 27px; }
+  .settings-card-heading, .settings-card form { padding: 17px; }
+  .settings-notice { padding: 13px 17px; }
+  .local-pill { font-size: 0; padding: 7px; }
+  .local-pill span { width: 7px; height: 7px; }
+  .server-input-row { align-items: stretch; flex-direction: column; }
+  .server-input-row button { width: 100%; }
+}
